@@ -174,7 +174,7 @@ try:
                     # randomised things
                     if "http" in message.content:  # don't mess with links
                         pass
-                    elif random.randint(0, 100) <= 1 and message.content.strip().lower() != uwuified(
+                    elif random.randint(0, 100) <= 2 and message.content.strip().lower() != uwuified(
                             (message.content.strip())):
                         await message.channel.send(uwuified(message.content.strip()) + "\nuwu")
                     else:
