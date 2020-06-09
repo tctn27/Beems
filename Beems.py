@@ -5,6 +5,7 @@ try:
     import time
     import email_devs
     from discord.ext import commands
+    from discord import Game
     from os import listdir
     import os
 
@@ -114,6 +115,7 @@ try:
     @client.event
     async def on_ready():
         #  email_devs.online_email()
+        await client.change_presence(activity=Game(name="~help for help"))
         pass
 
 
