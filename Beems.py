@@ -3,7 +3,6 @@ import websockets
 try:
     import random
     import time
-    import email_devs
     from discord.ext import commands
     from discord import Game
     from os import listdir
@@ -114,7 +113,6 @@ try:
 
     @client.event
     async def on_ready():
-        #  email_devs.online_email()
         await client.change_presence(activity=Game(name="~help for help"))
         pass
 
@@ -198,7 +196,6 @@ try:
                     with open("logs/" + str(time.time()) + ".log", "w+") as log_file:
                         log_file.write(str(time.time()) + "\n")
                         log_file.write(str(e))
-                    #  email_devs.error_email(e)
                     await message.channel.send("<@227336569881624576> <@191357391453945856> error")
 
     client.run(TOKEN)
