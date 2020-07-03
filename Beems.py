@@ -5,6 +5,7 @@ try:
     import time
     from discord.ext import commands
     from discord import Game
+    from discord import Message
     from os import listdir
     import os
 
@@ -98,6 +99,12 @@ try:
             return str(fetch_file.read())
 
 
+    def full_combine(message, words):
+        set_of_two = words[random.randint(0, len(words) - 1)]
+        combined = combine(set_of_two[0], set_of_two[1])
+        await message.channel.send("*" + combined + "*")
+
+
     # noinspection PyArgumentList
     def uwuified(message=str):
         message = message.lower()
@@ -131,8 +138,15 @@ try:
                         store_meme(message.content.split("~save"))
                         await message.channel.send("Meme stored")
                     elif message.content.startswith("~blacklist"):
-                        with open("blacklist", "a") as file:
-                            file.write(message.content.split("~blacklist ") + "\n")
+                        if message.content == "~blacklist":
+                            with open("blacklist", "a") as file:
+                                file.write(message.channel.id + "\n")
+                        else:
+                            with open("blacklist", "a") as file:
+                                file.write(message.content.split("~blacklist ") + "\n")
+                    elif message.content.startswith("@Beems"):
+                        words = give_eligible_words(message)
+                        await message.channel.send(full_combine(message, words))
                     elif message.content.startswith("~meme"):
                         await message.channel.send(get_meme())
                     elif message.content == "~help":
@@ -143,7 +157,10 @@ try:
                                                    "    Also has a 1/100 chance of happening on any message\n"
                                                    "Beems also has a 1/10 chance of combining 2 words in any given "
                                                    "sentence\n "
+                                                   "@Beems: combines two words in the remainder of the message if "
+                                                   "possible\n"
                                                    "~link: shows the link to add Beems to your other servers\n"
+                                                   "~blacklist: stops Beems from looking at "
                                                    "\n"
                                                    "**Memes**\n"
                                                    "\n"
@@ -180,18 +197,12 @@ try:
                     else:
                         words = give_eligible_words(message)
                         if len(words) > 0 and message.channel in whitelist:
-                            set_of_two = words[random.randint(0, len(words) - 1)]
-                            combined = combine(set_of_two[0], set_of_two[1])
-                            await message.channel.send("*" + combined + "*")
+                            full_combine(message, words)
                         elif len(message.content.split(" ")) == 2 and len(words) > 0 \
                                 and message.channel.id in whitelist:
-                            set_of_two = words[random.randint(0, len(words) - 1)]
-                            combined = combine(set_of_two[0], set_of_two[1])
-                            await message.channel.send("*" + combined + "*")
+                            full_combine(message, words)
                         elif len(words) > 0 and random.randint(0, 20) == 0:
-                            set_of_two = words[random.randint(0, len(words) - 1)]
-                            combined = combine(set_of_two[0], set_of_two[1])
-                            await message.channel.send("*" + combined + "*")
+                            full_combine(message, words)
                 except Exception as e:
                     with open("logs/" + str(time.time()) + ".log", "w+") as log_file:
                         log_file.write(str(time.time()) + "\n")
