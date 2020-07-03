@@ -99,7 +99,7 @@ try:
             return str(fetch_file.read())
 
 
-    def full_combine(message, words):
+    async def full_combine(message, words):
         set_of_two = words[random.randint(0, len(words) - 1)]
         combined = combine(set_of_two[0], set_of_two[1])
         await message.channel.send("*" + combined + "*")
