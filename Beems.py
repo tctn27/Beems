@@ -120,6 +120,7 @@ try:
 
     @client.event
     async def on_ready():
+        print("ready")
         await client.change_presence(activity=Game(name="~help for help"))
         pass
 
@@ -146,7 +147,7 @@ try:
                                 file.write(message.content.split("~blacklist ") + "\n")
                     elif message.content.startswith("@Beems"):
                         words = give_eligible_words(message)
-                        await message.channel.send(full_combine(message, words))
+                        await full_combine(message, words)
                     elif message.content.startswith("~meme"):
                         await message.channel.send(get_meme())
                     elif message.content == "~help":
@@ -197,12 +198,12 @@ try:
                     else:
                         words = give_eligible_words(message)
                         if len(words) > 0 and message.channel in whitelist:
-                            full_combine(message, words)
+                            await full_combine(message, words)
                         elif len(message.content.split(" ")) == 2 and len(words) > 0 \
                                 and message.channel.id in whitelist:
-                            full_combine(message, words)
+                            await full_combine(message, words)
                         elif len(words) > 0 and random.randint(0, 20) == 0:
-                            full_combine(message, words)
+                            await full_combine(message, words)
                 except Exception as e:
                     with open("logs/" + str(time.time()) + ".log", "w+") as log_file:
                         log_file.write(str(time.time()) + "\n")
