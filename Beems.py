@@ -137,7 +137,8 @@ try:
                         await message.channel.send(uwuified(message.content.split("~uwu")[1].strip()) + "\nuwu")
                     elif message.content.startswith("<@585050654330847232>"):
                         words = give_eligible_words(message)
-                        await full_combine(message, words)
+                        # await full_combine(message, words)
+                        await message.channel.send("Hello")
                     elif message.content.startswith("~save"):
                         store_meme(message.content.split("~save"))
                         await message.channel.send("Meme stored")
@@ -148,9 +149,6 @@ try:
                         else:
                             with open("blacklist", "a") as file:
                                 file.write(message.content.split("~blacklist ") + "\n")
-                    elif message.content.startswith("@Beems"):
-                        words = give_eligible_words(message)
-                        await full_combine(message, words)
                     elif message.content.startswith("~meme"):
                         await message.channel.send(get_meme())
                     elif message.content == "~help":
