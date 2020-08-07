@@ -137,8 +137,7 @@ try:
                         await message.channel.send(uwuified(message.content.split("~uwu")[1].strip()) + "\nuwu")
                     elif message.content.startswith("<@!585050654330847232>"):
                         words = give_eligible_words(message)
-                        # await full_combine(message, words)
-                        await message.channel.send("Hello")
+                        await full_combine(message, words)
                     elif message.content.startswith("~save"):
                         store_meme(message.content.split("~save"))
                         await message.channel.send("Meme stored")
