@@ -9,8 +9,8 @@ try:
     from os import listdir
     import os
 
-    with open("beems_token", "r") as file:
-        TOKEN = file.read()
+    with open("beems_token", "r+") as file:
+        TOKEN = file.read().rstrip()
 
     client = commands.Bot(command_prefix="~")
 
@@ -135,6 +135,9 @@ try:
                         os.system("update")
                     elif message.content.startswith("~uwu"):
                         await message.channel.send(uwuified(message.content.split("~uwu")[1].strip()) + "\nuwu")
+                    elif message.content.startswith("<@585050654330847232>"):
+                        words = give_eligible_words(message)
+                        await full_combine(message, words)
                     elif message.content.startswith("~save"):
                         store_meme(message.content.split("~save"))
                         await message.channel.send("Meme stored")
