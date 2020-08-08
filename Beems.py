@@ -192,7 +192,7 @@ try:
                     # randomised things
                     if "http" in message.content:  # don't mess with links
                         pass
-                    elif random.randint(0, 100) <= 2 and message.content.strip().lower() != uwuified(
+                    elif random.randint(0, 100) <= 1 and message.content.strip().lower() != uwuified(
                             (message.content.strip())):
                         await message.channel.send(uwuified(message.content.strip()) + "\nuwu")
                     else:
@@ -202,12 +202,9 @@ try:
                         elif len(message.content.split(" ")) == 2 and len(words) > 0 \
                                 and message.channel.id in whitelist:
                             await full_combine(message, words)
-                        elif len(words) > 0 and random.randint(0, 20) == 0:
+                        elif len(words) > 0 and random.randint(0, 30) == 0:
                             await full_combine(message, words)
                 except Exception as e:
-                    with open("logs/" + str(time.time()) + ".log", "w+") as log_file:
-                        log_file.write(str(time.time()) + "\n")
-                        log_file.write(str(e))
                     await message.channel.send("<@227336569881624576> <@191357391453945856> error")
 
     client.run(TOKEN)
