@@ -192,9 +192,9 @@ try:
                     # randomised things
                     if "http" in message.content:  # don't mess with links
                         pass
-                    elif random.randint(0, 100) <= 1 and message.content.strip().lower() != uwuified(
-                            (message.content.strip())):
-                        await message.channel.send(uwuified(message.content.strip()) + "\nuwu")
+                    # elif random.randint(0, 100) <= 1 and message.content.strip().lower() != uwuified(
+                    #        (message.content.strip())):
+                    #    await message.channel.send(uwuified(message.content.strip()) + "\nuwu")
                     else:
                         words = give_eligible_words(message)
                         if len(words) > 0 and message.channel in whitelist:
@@ -202,7 +202,7 @@ try:
                         elif len(message.content.split(" ")) == 2 and len(words) > 0 \
                                 and message.channel.id in whitelist:
                             await full_combine(message, words)
-                        elif len(words) > 0 and random.randint(0, 30) == 0:
+                        elif len(words) > 0 and random.randint(0, 50) == 0:
                             await full_combine(message, words)
                 except Exception as e:
                     await message.channel.send("<@227336569881624576> <@191357391453945856> error")
