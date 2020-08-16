@@ -223,6 +223,7 @@ try:
                         elif len(words) > 0 and random.randint(0, 50) == 0:
                             await full_combine(message, words)
                 except Exception as e:
+                    print(e)
                     await message.channel.send("<@227336569881624576> <@191357391453945856> error")
 
     client.run(TOKEN)
