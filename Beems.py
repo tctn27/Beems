@@ -118,7 +118,7 @@ try:
         return message
 
 
-    async def blacklist(message):
+    async def blacklist_on_call(message):
         await message.channel.send("React with 👍 to confirm")
 
         def check(reaction, user):
@@ -151,8 +151,8 @@ try:
                         os.system("update")
                     elif message.content.startswith("~uwu"):
                         await message.channel.send(uwuified(message.content.split("~uwu")[1].strip()) + "\nuwu")
-                    # elif message.content.startswith("~blacklist"):
-                    #    await blacklist(message)
+                    elif message.content.startswith("~blacklist"):
+                        await blacklist_on_call(message)
                     elif message.content.startswith("<@!585050654330847232>"):
                         words = give_eligible_words(message)
                         await full_combine(message, words)
