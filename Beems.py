@@ -118,6 +118,22 @@ try:
         return message
 
 
+    async def blacklist(message):
+        await message.channel.send("React with 👍 to confirm")
+
+        def check(reaction, user):
+            return user == message.author and str(reaction.emoji) == '👍'
+
+        try:
+            reaction, user = await client.wait_for("reaction_add", timeout=60.0, check=check)
+        except:
+            await message.channel.send("Channel not blacklisted")
+        else:
+            with open("blacklist", "w+") as file:
+                file.write("\n" + message.channel.id)
+            await message.channel.send("Channel blacklisted")
+
+
     @client.event
     async def on_ready():
         print("ready")
@@ -135,6 +151,8 @@ try:
                         os.system("update")
                     elif message.content.startswith("~uwu"):
                         await message.channel.send(uwuified(message.content.split("~uwu")[1].strip()) + "\nuwu")
+                    elif message.content.startswith("~blacklist"):
+                        await blacklist(message)
                     elif message.content.startswith("<@!585050654330847232>"):
                         words = give_eligible_words(message)
                         await full_combine(message, words)
