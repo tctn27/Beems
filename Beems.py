@@ -179,7 +179,7 @@ try:
                                                    "@Beems: combines two words in the remainder of the message if "
                                                    "possible\n"
                                                    "~link: shows the link to add Beems to your other servers\n"
-                                                   "~blacklist: stops Beems from looking at "
+                                                   "~blacklist: stops Beems from looking at this channel"
                                                    "\n"
                                                    "**Memes**\n"
                                                    "\n"
