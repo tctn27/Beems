@@ -149,6 +149,7 @@ try:
                 if message.content.startswith("~update") and message.channel.id in whitelist:  # direct calls
                     await message.channel.send("Update inbound, shutting down momentarily")
                     os.system("update")
+
                 elif message.content.startswith("~roll"):
                     inp = message.content.split("~roll")[1].strip()
                     capture = re.match("(\d*)[d](\d+)([\+-])*(\d*)", inp)
@@ -160,69 +161,120 @@ try:
                         cap = []
                         for i in capture.groups():
                             cap.append(i)
-                        sum = 0
-                        rolls = []
-                        if "-adv" in inp:
-                            if cap[0] == '':
-                                roll1 = randint(1, int(cap[1]))
-                                roll2 = randint(1, int(cap[1]))
-                                rolls.append([roll1, roll2])
-                                sum += max(roll1, roll2)
-                            else:
-                                for i in range(0, int(cap[0])):
-                                    roll1 = randint(1, int(cap[1]))
-                                    roll2 = randint(1, int(cap[1]))
-                                    rolls.append([roll1, roll2])
-                                    sum += max(roll1, roll2)
+                        if int(cap[0]) <= 1000:
+                            if cap[1] != "0":
+                                sum = 0
+                                rolls = []
+                                if "-adv" in inp:
+                                    if cap[0] == '':
+                                        roll1 = randint(1, int(cap[1]))
+                                        roll2 = randint(1, int(cap[1]))
+                                        rolls.append([roll1, roll2])
+                                        sum += max(roll1, roll2)
+                                    else:
+                                        for i in range(0, int(cap[0])):
+                                            roll1 = randint(1, int(cap[1]))
+                                            roll2 = randint(1, int(cap[1]))
+                                            rolls.append([roll1, roll2])
+                                            sum += max(roll1, roll2)
 
-                            if cap[3] != "":
-                                if cap[2] == "+":
-                                    sum += int(cap[3])
+                                    if cap[3] != "":
+                                        if cap[2] == "+":
+                                            sum += int(cap[3])
+                                        elif cap[2] == "-":
+                                            sum -= int(cap[3])
+                                if "-dis" in inp:
+                                    if cap[0] == '':
+                                        roll1 = randint(1, int(cap[1]))
+                                        roll2 = randint(1, int(cap[1]))
+                                        rolls.append([roll1, roll2])
+                                        sum += min(roll1, roll2)
+                                    else:
+                                        for i in range(0, int(cap[0])):
+                                            roll1 = randint(1, int(cap[1]))
+                                            roll2 = randint(1, int(cap[1]))
+                                            rolls.append([roll1, roll2])
+                                            sum += min(roll1, roll2)
+
+                                    if cap[3] != "":
+                                        if cap[2] == "+":
+                                            sum += int(cap[3])
+                                        elif cap[2] == "-":
+                                            sum -= int(cap[3])
+                                else:
+                                    if cap[0] == '':
+                                        roll = randint(1, int(cap[1]))
+                                        rolls.append(roll)
+                                        sum += roll
+                                    else:
+                                        for i in range(0, int(cap[0])):
+                                            roll = randint(1, int(cap[1]))
+                                            rolls.append(roll)
+                                            sum += roll
+
+                                    if cap[3] != "":
+                                        if cap[2] == "+":
+                                            sum += int(cap[3])
+                                        elif cap[2] == "-":
+                                            sum -= int(cap[3])
+
+                                string = ""
+                                for i in rolls:
+                                    string += str(i)
+                                    string += " + "
+                                if cap[2] is None:
+                                    string = string[:-3]
                                 elif cap[2] == "-":
-                                    sum -= int(cap[3])
-                        else:
-                            if cap[0] == '':
-                                roll = randint(1, int(cap[1]))
-                                rolls.append(roll)
-                                sum += roll
+                                    string = string[:-3] + " - "
+                                    string += str(cap[3])
+                                else:
+                                    string += str(cap[3])
+
+                                string += " = " + str(sum)
+
+                                await message.channel.send(string)
                             else:
-                                for i in range(0, int(cap[0])):
-                                    roll = randint(1, int(cap[1]))
-                                    rolls.append(roll)
-                                    sum += roll
-
-                            if cap[3] != "":
-                                if cap[2] == "+":
-                                    sum += int(cap[3])
-                                elif cap[2] == "-":
-                                    sum -= int(cap[3])
-
-                        string = ""
-                        for i in rolls:
-                            string += str(i)
-                            string += " + "
-                        if cap[2] is None:
-                            string = string[:-3]
-                        elif cap[2] == "-":
-                            string = string[:-3] + " - "
-                            string += str(cap[3])
+                                await message.channel.send("Dice don't have 0 sides, silly billy")
                         else:
-                            string += str(cap[3])
-
-                        string += " = " + str(sum)
-
-                        await message.channel.send(string)
+                            await message.channel.send("Too many dice, what the hell are you doing mate")
 
                 elif message.content.startswith("~uwu"):
                     await message.channel.send(uwuified(message.content.split("~uwu")[1].strip()) + "\nuwu")
+
+                elif message.content.startswith("~d10k"):
+                    inp1 = message.content
+                    inp = inp1.split("~d10k")
+                    if inp[1] == "":
+                        num = randint(0, 9999)
+                        with open("d10k.txt", "r+", encoding='utf-8-sig') as file:
+                            for i, line in enumerate(file):
+                                if i == num:
+                                    await message.channel.send(line)
+                                elif i > num:
+                                    break
+                    else:
+                        try:
+                            num = int(re.search("(\d\d\d\d)", inp[1]).groups()[0])
+                            with open("d10k.txt", "r+", encoding='utf-8-sig') as file:
+                                for i, line in enumerate(file):
+                                    if i == num:
+                                        await message.channel.send(line)
+                                    elif i > num:
+                                        break
+                        except AttributeError:
+                            await message.channel.send("Needs to be in the form ~d10k XXXX")
+
                 elif message.content.startswith("~blacklist"):
                     await blacklist_on_call(message)
+
                 elif message.content.startswith("<@!585050654330847232>"):
                     words = give_eligible_words(message)
                     await full_combine(message, words)
+
                 elif message.content.startswith("~save"):
                     store_meme(message.content.split("~save"))
                     await message.channel.send("Meme stored")
+
                 elif message.content.startswith("~blacklist"):
                     if message.content == "~blacklist":
                         with open("blacklist", "a") as file:
