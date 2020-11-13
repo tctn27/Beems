@@ -262,15 +262,15 @@ try:
                                         polarity = True
 
                             else:
-                                dc = int(group[6[2:]])
+                                dc = int(group[6][2:])
 
                         overall_string += "\nTotal: " + str(total)
                         if dc != -1:
                             overall_string += "\nDC: " + str(dc)
                             if total >= dc:
-                                overall_string += "Result: Passed"
+                                overall_string += "\nResult: Passed"
                             else:
-                                overall_string += "Result: Failed"
+                                overall_string += "\nResult: Failed"
                         await message.channel.send(overall_string)
 
                 elif message.content.startswith("~uwu"):
