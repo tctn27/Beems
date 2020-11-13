@@ -152,91 +152,115 @@ try:
 
                 elif message.content.startswith("~roll"):
                     inp = message.content.split("~roll")[1].strip()
-                    capture = re.match("(\d*)[d](\d+)([\+-])*(\d*)", inp)
+                    capture = re.findall("(\d*)[d](\d+)([+-])?(\d*)(\s-adv|\s-dis)?|\s([+-])\s", inp)
 
-                    if capture is None:
+                    if not capture:
                         await message.channel.send("Invalid roll input\n"
-                                                   "Please put in the form ~roll AdB+C")
+                                                   "It needs to look something like\n"
+                                                   "~roll 2d6 -adv - 3d2+1 -dis")
                     else:
-                        cap = []
-                        for i in capture.groups():
-                            cap.append(i)
-                        if int(cap[0]) <= 1000:
-                            if cap[1] != "0":
-                                sum = 0
-                                rolls = []
-                                if "-adv" in inp:
-                                    if cap[0] == '':
-                                        roll1 = randint(1, int(cap[1]))
-                                        roll2 = randint(1, int(cap[1]))
-                                        rolls.append([roll1, roll2])
-                                        sum += max(roll1, roll2)
-                                    else:
-                                        for i in range(0, int(cap[0])):
-                                            roll1 = randint(1, int(cap[1]))
-                                            roll2 = randint(1, int(cap[1]))
-                                            rolls.append([roll1, roll2])
-                                            sum += max(roll1, roll2)
+                        first = True
+                        polarity = True
+                        total = 0
+                        overall_string = ""
+                        for group in capture:
+                            if group[5] == '':
+                                if group[1] != "0":
+                                    if int(group[0]) <= 1000:
+                                        rolling_sum = 0
+                                        rolls = []
+                                        if group[4] == ' -adv':
+                                            if group[0] == '' or group[0] == '1':
+                                                roll1 = randint(1, int(group[1]))
+                                                roll2 = randint(1, int(group[1]))
+                                                rolls.append([roll1, roll2])
+                                                rolling_sum += max(roll1, roll2)
+                                            else:
+                                                for i in range(0, int(group[0])):
+                                                    roll1 = randint(1, int(group[1]))
+                                                    roll2 = randint(1, int(group[1]))
+                                                    rolls.append([roll1, roll2])
+                                                    rolling_sum += max(roll1, roll2)
 
-                                    if cap[3] != "":
-                                        if cap[2] == "+":
-                                            sum += int(cap[3])
-                                        elif cap[2] == "-":
-                                            sum -= int(cap[3])
-                                if "-dis" in inp:
-                                    if cap[0] == '':
-                                        roll1 = randint(1, int(cap[1]))
-                                        roll2 = randint(1, int(cap[1]))
-                                        rolls.append([roll1, roll2])
-                                        sum += min(roll1, roll2)
-                                    else:
-                                        for i in range(0, int(cap[0])):
-                                            roll1 = randint(1, int(cap[1]))
-                                            roll2 = randint(1, int(cap[1]))
-                                            rolls.append([roll1, roll2])
-                                            sum += min(roll1, roll2)
+                                            if group[3] != "":
+                                                if group[2] == "+":
+                                                    rolling_sum += int(group[3])
+                                                elif group[2] == "-":
+                                                    rolling_sum -= int(group[3])
+                                        elif group[4] == ' -dis':
+                                            if group[0] == '' or group[0] == '1':
+                                                roll1 = randint(1, int(group[1]))
+                                                roll2 = randint(1, int(group[1]))
+                                                rolls.append([roll1, roll2])
+                                                rolling_sum += min(roll1, roll2)
+                                            else:
+                                                for i in range(0, int(group[0])):
+                                                    roll1 = randint(1, int(group[1]))
+                                                    roll2 = randint(1, int(group[1]))
+                                                    rolls.append([roll1, roll2])
+                                                    rolling_sum += min(roll1, roll2)
 
-                                    if cap[3] != "":
-                                        if cap[2] == "+":
-                                            sum += int(cap[3])
-                                        elif cap[2] == "-":
-                                            sum -= int(cap[3])
+                                            if group[3] != "":
+                                                if group[2] == "+":
+                                                    rolling_sum += int(group[3])
+                                                elif group[2] == "-":
+                                                    rolling_sum -= int(group[3])
+                                        else:
+                                            if group[0] == '':
+                                                roll = randint(1, int(group[1]))
+                                                rolls.append(roll)
+                                                rolling_sum += roll
+                                            else:
+                                                for i in range(0, int(group[0])):
+                                                    roll = randint(1, int(group[1]))
+                                                    rolls.append(roll)
+                                                    rolling_sum += roll
+
+                                            if group[3] != "":
+                                                if group[2] == "+":
+                                                    rolling_sum += int(group[3])
+                                                elif group[2] == "-":
+                                                    rolling_sum -= int(group[3])
+
+                                        string = ""
+                                        if first:
+                                            first = False
+                                        else:
+                                            if polarity:
+                                                string += "\n+\n"
+                                            else:
+                                                string += "\n-\n"
+                                        for i in rolls:
+                                            string += str(i)
+                                            string += " + "
+                                        if group[2] == '':
+                                            string = string[:-3]
+                                        elif group[2] == "-":
+                                            string = string[:-3] + " - "
+                                            string += str(group[3])
+                                        else:
+                                            string += str(group[3])
+
+                                        string += " = " + str(rolling_sum)
+
+                                        if polarity:
+                                            total += rolling_sum
+                                        else:
+                                            total -= rolling_sum
+
+                                        overall_string += string
+                                    else:
+                                        await message.channel.send("Too many dice, what the hell are you doing mate")
                                 else:
-                                    if cap[0] == '':
-                                        roll = randint(1, int(cap[1]))
-                                        rolls.append(roll)
-                                        sum += roll
-                                    else:
-                                        for i in range(0, int(cap[0])):
-                                            roll = randint(1, int(cap[1]))
-                                            rolls.append(roll)
-                                            sum += roll
-
-                                    if cap[3] != "":
-                                        if cap[2] == "+":
-                                            sum += int(cap[3])
-                                        elif cap[2] == "-":
-                                            sum -= int(cap[3])
-
-                                string = ""
-                                for i in rolls:
-                                    string += str(i)
-                                    string += " + "
-                                if cap[2] is None:
-                                    string = string[:-3]
-                                elif cap[2] == "-":
-                                    string = string[:-3] + " - "
-                                    string += str(cap[3])
-                                else:
-                                    string += str(cap[3])
-
-                                string += " = " + str(sum)
-
-                                await message.channel.send(string)
+                                    await message.channel.send("Dice don't have 0 sides, silly billy")
                             else:
-                                await message.channel.send("Dice don't have 0 sides, silly billy")
-                        else:
-                            await message.channel.send("Too many dice, what the hell are you doing mate")
+                                if group[5] == "-":
+                                    polarity = not polarity
+                                if group[5] == "+":
+                                    polarity = True
+
+                        overall_string += "\nTotal: " + str(total)
+                        await message.channel.send(overall_string)
 
                 elif message.content.startswith("~uwu"):
                     await message.channel.send(uwuified(message.content.split("~uwu")[1].strip()) + "\nuwu")
