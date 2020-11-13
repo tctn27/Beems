@@ -152,7 +152,7 @@ try:
 
                 elif message.content.startswith("~roll"):
                     inp = message.content.split("~roll")[1].strip()
-                    capture = re.findall("(\d*)[d](\d+)([+-])?(\d*)(adv|dis)?|\s([+-])\s", inp)
+                    capture = re.findall("(\d*)[d](\d+)([+-])?(\d*)(adv|dis)?|\s([+-])\s|(dc\d+)", inp)
 
                     if not capture:
                         await message.channel.send("Invalid roll input\n"
@@ -163,103 +163,114 @@ try:
                         polarity = True
                         total = 0
                         overall_string = ""
+                        dc = -1
                         for group in capture:
-                            if group[5] == '':
-                                if group[1] != "0":
-                                    if int(group[0]) <= 1000:
-                                        rolling_sum = 0
-                                        rolls = []
-                                        if group[4] == 'adv':
-                                            if group[0] == '' or group[0] == '1':
-                                                roll1 = randint(1, int(group[1]))
-                                                roll2 = randint(1, int(group[1]))
-                                                rolls.append([roll1, roll2])
-                                                rolling_sum += max(roll1, roll2)
-                                            else:
-                                                for i in range(0, int(group[0])):
+                            if group[6] == '':
+                                if group[5] == '':
+                                    if group[1] != "0":
+                                        if int(group[0]) <= 1000:
+                                            rolling_sum = 0
+                                            rolls = []
+                                            if group[4] == 'adv':
+                                                if group[0] == '' or group[0] == '1':
                                                     roll1 = randint(1, int(group[1]))
                                                     roll2 = randint(1, int(group[1]))
                                                     rolls.append([roll1, roll2])
                                                     rolling_sum += max(roll1, roll2)
+                                                else:
+                                                    for i in range(0, int(group[0])):
+                                                        roll1 = randint(1, int(group[1]))
+                                                        roll2 = randint(1, int(group[1]))
+                                                        rolls.append([roll1, roll2])
+                                                        rolling_sum += max(roll1, roll2)
 
-                                            if group[3] != "":
-                                                if group[2] == "+":
-                                                    rolling_sum += int(group[3])
-                                                elif group[2] == "-":
-                                                    rolling_sum -= int(group[3])
-                                        elif group[4] == 'dis':
-                                            if group[0] == '' or group[0] == '1':
-                                                roll1 = randint(1, int(group[1]))
-                                                roll2 = randint(1, int(group[1]))
-                                                rolls.append([roll1, roll2])
-                                                rolling_sum += min(roll1, roll2)
-                                            else:
-                                                for i in range(0, int(group[0])):
+                                                if group[3] != "":
+                                                    if group[2] == "+":
+                                                        rolling_sum += int(group[3])
+                                                    elif group[2] == "-":
+                                                        rolling_sum -= int(group[3])
+                                            elif group[4] == 'dis':
+                                                if group[0] == '' or group[0] == '1':
                                                     roll1 = randint(1, int(group[1]))
                                                     roll2 = randint(1, int(group[1]))
                                                     rolls.append([roll1, roll2])
                                                     rolling_sum += min(roll1, roll2)
+                                                else:
+                                                    for i in range(0, int(group[0])):
+                                                        roll1 = randint(1, int(group[1]))
+                                                        roll2 = randint(1, int(group[1]))
+                                                        rolls.append([roll1, roll2])
+                                                        rolling_sum += min(roll1, roll2)
 
-                                            if group[3] != "":
-                                                if group[2] == "+":
-                                                    rolling_sum += int(group[3])
-                                                elif group[2] == "-":
-                                                    rolling_sum -= int(group[3])
-                                        else:
-                                            if group[0] == '':
-                                                roll = randint(1, int(group[1]))
-                                                rolls.append(roll)
-                                                rolling_sum += roll
+                                                if group[3] != "":
+                                                    if group[2] == "+":
+                                                        rolling_sum += int(group[3])
+                                                    elif group[2] == "-":
+                                                        rolling_sum -= int(group[3])
                                             else:
-                                                for i in range(0, int(group[0])):
+                                                if group[0] == '':
                                                     roll = randint(1, int(group[1]))
                                                     rolls.append(roll)
                                                     rolling_sum += roll
+                                                else:
+                                                    for i in range(0, int(group[0])):
+                                                        roll = randint(1, int(group[1]))
+                                                        rolls.append(roll)
+                                                        rolling_sum += roll
 
-                                            if group[3] != "":
-                                                if group[2] == "+":
-                                                    rolling_sum += int(group[3])
-                                                elif group[2] == "-":
-                                                    rolling_sum -= int(group[3])
+                                                if group[3] != "":
+                                                    if group[2] == "+":
+                                                        rolling_sum += int(group[3])
+                                                    elif group[2] == "-":
+                                                        rolling_sum -= int(group[3])
 
-                                        string = ""
-                                        if first:
-                                            first = False
-                                        else:
-                                            if polarity:
-                                                string += "\n+\n"
+                                            string = ""
+                                            if first:
+                                                first = False
                                             else:
-                                                string += "\n-\n"
-                                        for i in rolls:
-                                            string += str(i)
-                                            string += " + "
-                                        if group[2] == '':
-                                            string = string[:-3]
-                                        elif group[2] == "-":
-                                            string = string[:-3] + " - "
-                                            string += str(group[3])
+                                                if polarity:
+                                                    string += "\n+\n"
+                                                else:
+                                                    string += "\n-\n"
+                                            for i in rolls:
+                                                string += str(i)
+                                                string += " + "
+                                            if group[2] == '':
+                                                string = string[:-3]
+                                            elif group[2] == "-":
+                                                string = string[:-3] + " - "
+                                                string += str(group[3])
+                                            else:
+                                                string += str(group[3])
+
+                                            string += " = " + str(rolling_sum)
+
+                                            if polarity:
+                                                total += rolling_sum
+                                            else:
+                                                total -= rolling_sum
+
+                                            overall_string += string
                                         else:
-                                            string += str(group[3])
-
-                                        string += " = " + str(rolling_sum)
-
-                                        if polarity:
-                                            total += rolling_sum
-                                        else:
-                                            total -= rolling_sum
-
-                                        overall_string += string
+                                            await message.channel.send("Too many dice, what the hell are you doing mate")
                                     else:
-                                        await message.channel.send("Too many dice, what the hell are you doing mate")
+                                        await message.channel.send("Dice don't have 0 sides, silly billy")
                                 else:
-                                    await message.channel.send("Dice don't have 0 sides, silly billy")
+                                    if group[5] == "-":
+                                        polarity = not polarity
+                                    if group[5] == "+":
+                                        polarity = True
+
                             else:
-                                if group[5] == "-":
-                                    polarity = not polarity
-                                if group[5] == "+":
-                                    polarity = True
+                                dc = int(group[6[2:]])
 
                         overall_string += "\nTotal: " + str(total)
+                        if dc != -1:
+                            overall_string += "\nDC: " + str(dc)
+                            if total >= dc:
+                                overall_string += "Result: Passed"
+                            else:
+                                overall_string += "Result: Failed"
                         await message.channel.send(overall_string)
 
                 elif message.content.startswith("~uwu"):
@@ -365,6 +376,7 @@ try:
             except Exception as e:
                 print(e)
                 await message.channel.send("<@227336569881624576> error")
+
 
     client.run(TOKEN)
 except websockets.exceptions.ConnectionClosed as e:
