@@ -152,12 +152,12 @@ try:
 
                 elif message.content.startswith("~roll"):
                     inp = message.content.split("~roll")[1].strip()
-                    capture = re.findall("(\d*)[d](\d+)([+-])?(\d*)(\s-adv|\s-dis)?|\s([+-])\s", inp)
+                    capture = re.findall("(\d*)[d](\d+)([+-])?(\d*)(adv|dis)?|\s([+-])\s", inp)
 
                     if not capture:
                         await message.channel.send("Invalid roll input\n"
                                                    "It needs to look something like\n"
-                                                   "~roll 2d6 -adv - 3d2+1 -dis")
+                                                   "~roll 2d6adv - 3d2+1dis")
                     else:
                         first = True
                         polarity = True
@@ -169,7 +169,7 @@ try:
                                     if int(group[0]) <= 1000:
                                         rolling_sum = 0
                                         rolls = []
-                                        if group[4] == ' -adv':
+                                        if group[4] == 'adv':
                                             if group[0] == '' or group[0] == '1':
                                                 roll1 = randint(1, int(group[1]))
                                                 roll2 = randint(1, int(group[1]))
@@ -187,7 +187,7 @@ try:
                                                     rolling_sum += int(group[3])
                                                 elif group[2] == "-":
                                                     rolling_sum -= int(group[3])
-                                        elif group[4] == ' -dis':
+                                        elif group[4] == 'dis':
                                             if group[0] == '' or group[0] == '1':
                                                 roll1 = randint(1, int(group[1]))
                                                 roll2 = randint(1, int(group[1]))
