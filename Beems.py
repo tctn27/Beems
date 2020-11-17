@@ -26,6 +26,27 @@ try:
             blacklist.append(int(i))
 
 
+    def EID(n1, n2, n3, n4):
+        numbers = [n1, n2, n3, n4]
+        keywords = ["flying", "deathtouch", "reach", "indestructible", "defender", "lifelink", "trample", "menace",
+                    "first strike", "double strike", "haste", "hexproof"]
+        copy = ["flying", "deathtouch", "reach", "indestructible", "defender", "lifelink", "trample", "menace",
+                "first strike", "double strike", "haste", "hexproof"]
+        out = []
+        current_number = 0
+        iteration = 0
+        for word in keywords:
+            a1 = numbers[iteration % len(numbers)]
+            a2 = numbers[(iteration + 1) % len(numbers)]
+            current_number = (current_number * a1) + a2
+            selected = copy[current_number % len(copy)]
+
+            out.append((word, selected))
+            copy.remove(selected)
+
+        return out
+
+
     def only_letters(word):
         letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
                    "u", "v", "w", "x", "y", "z"]
@@ -149,6 +170,19 @@ try:
                 if message.content.startswith("~update") and message.channel.id in whitelist:  # direct calls
                     await message.channel.send("Update inbound, shutting down momentarily")
                     os.system("update")
+
+                elif message.content.startswith("~EID"):
+                    inp = message.content.split("~EID")[1].strip()
+                    cap = re.match("(\d\d\d\d)", inp)
+                    nums = []
+                    for i in cap.groups()[0]:
+                        nums.append(int(i))
+                    out = "For " + cap.groups()[0] + ":\n\n"
+
+                    for i in EID(nums[0], nums[1], nums[2], nums[3]):
+                        out += i[0].capitalize() + " is " + i[1] + "\n"
+
+                    await message.channel.send(out)
 
                 elif message.content.startswith("~roll"):
                     inp = message.content.split("~roll")[1].strip()
