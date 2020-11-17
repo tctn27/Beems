@@ -175,9 +175,13 @@ try:
                     inp = message.content.split("~EID")[1].strip()
                     cap = re.match("(\d\d\d\d)", inp)
                     nums = []
-                    for i in cap.groups()[0]:
-                        nums.append(int(i))
-                    out = "For " + cap.groups()[0] + ":\n\n"
+                    if cap is not None:
+                        for i in cap.groups()[0]:
+                            nums.append(int(i))
+                        out = "For " + cap.groups()[0] + ":\n\n"
+                    else:
+                        nums = [randint(1, 6), randint(1, 6), randint(1, 6), randint(1, 6)]
+                        out = "For " + str(nums[0]) + str(nums[1]) + str(nums[2]) + str(nums[3]) + ":\n\n"
 
                     for i in EID(nums[0], nums[1], nums[2], nums[3]):
                         out += i[0].capitalize() + " is " + i[1] + "\n"
