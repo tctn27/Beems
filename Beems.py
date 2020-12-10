@@ -340,7 +340,7 @@ try:
                 elif message.content.startswith("~blacklist"):
                     await blacklist_on_call(message)
 
-                elif "Beems" in message.content:
+                elif "beems" in message.content.lower():
                     await message.add_reaction("🅱️")
 
                 elif message.content.startswith("<@!585050654330847232>"):
