@@ -340,6 +340,9 @@ try:
                 elif message.content.startswith("~blacklist"):
                     await blacklist_on_call(message)
 
+                elif "Beems" in message.content:
+                    await message.add_reaction("🅱️")
+
                 elif message.content.startswith("<@!585050654330847232>"):
                     words = give_eligible_words(message)
                     await full_combine(message, words)
