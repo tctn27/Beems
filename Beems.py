@@ -349,7 +349,7 @@ try:
 
                 elif message.content.startswith("~initiative"):
                     os.system("runInitiative")
-                    await message.channel.send("Site started at 192.168.1.112/5000")
+                    await message.channel.send("Site started at 192.168.1.112:5000")
 
                 elif message.content.startswith("~save"):
                     store_meme(message.content.split("~save"))
