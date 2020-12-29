@@ -347,6 +347,10 @@ try:
                     words = give_eligible_words(message)
                     await full_combine(message, words)
 
+                elif message.content.startswith("~initiative"):
+                    os.system("runInitiative")
+                    await message.channel.send("Site started at 192.168.1.112/5000")
+
                 elif message.content.startswith("~save"):
                     store_meme(message.content.split("~save"))
                     await message.channel.send("Meme stored")
