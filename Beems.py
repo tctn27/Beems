@@ -206,6 +206,8 @@ try:
                             if group[6] == '':
                                 if group[5] == '':
                                     if group[1] != "0":
+                                        if group[0] == "":
+                                            group = ("1", group[1], group[2], group[3], group[4], group[5], group[6])
                                         if int(group[0]) <= 1000:
                                             rolling_sum = 0
                                             rolls = []
