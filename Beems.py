@@ -206,7 +206,7 @@ try:
                             if group[6] == '':
                                 if group[5] == '':
                                     if group[1] != "0":
-                                        if int(group[0]) <= 1000:
+                                        if int(group[0]) <= 300:
                                             rolling_sum = 0
                                             rolls = []
                                             if group[4] == 'adv':
