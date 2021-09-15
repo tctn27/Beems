@@ -337,9 +337,6 @@ try:
                         except AttributeError:
                             await message.channel.send("Needs to be in the form ~d10k XXXX")
 
-                elif message.content.startswith("~blacklist"):
-                    await blacklist_on_call(message)
-
                 elif "beems" in message.content.lower():
                     await message.add_reaction("🅱️")
 
@@ -351,19 +348,6 @@ try:
                     os.system("runInitiative")
                     await message.channel.send("Site started at 192.168.1.112:5000")
 
-                elif message.content.startswith("~save"):
-                    store_meme(message.content.split("~save"))
-                    await message.channel.send("Meme stored")
-
-                elif message.content.startswith("~blacklist"):
-                    if message.content == "~blacklist":
-                        with open("blacklist", "a") as file:
-                            file.write(message.channel.id + "\n")
-                    else:
-                        with open("blacklist", "a") as file:
-                            file.write(message.content.split("~blacklist ") + "\n")
-                elif message.content.startswith("~meme"):
-                    await message.channel.send(get_meme())
                 elif message.content == "~help":
                     await message.channel.send("**Commands for Beems!**\n"
                                                "\n"
@@ -420,7 +404,7 @@ try:
                         await full_combine(message, words)
             except Exception as e:
                 print(e)
-                await message.channel.send("<@227336569881624576> error")
+                await message.channel.send("<@227336569881624576> error\n" + str(e))
 
 
     client.run(TOKEN)
