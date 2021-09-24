@@ -174,7 +174,7 @@ try:
                     os.system("update")
 
                 elif message.content.startswith("~MCIP"):
-                    ip = subprocess.check_output(['curl https://ipinfo.io/ip'])
+                    ip = subprocess.check_output(['getIP'])
                     await message.channel.send(ip)
 
                 elif message.content.startswith("~EID"):
