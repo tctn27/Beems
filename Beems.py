@@ -4,6 +4,7 @@ import websockets
 
 try:
     import time
+    import requests
     from discord.ext import commands
     from discord import Game
     from discord import Message
@@ -174,7 +175,7 @@ try:
                     os.system("update")
 
                 elif message.content.startswith("~MCIP"):
-                    ip = subprocess.check_output(['getIP'])
+                    ip = requests.get('https://api.ipify.org').text
                     await message.channel.send(ip)
 
                 elif message.content.startswith("~EID"):
