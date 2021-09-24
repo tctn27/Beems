@@ -171,6 +171,10 @@ try:
                     await message.channel.send("Update inbound, shutting down momentarily")
                     os.system("update")
 
+                elif message.content.startswith("~MCIP"):
+                    ip = os.system("curl https://ipinfo.io/ip")
+                    await message.channel.send(ip)
+
                 elif message.content.startswith("~EID"):
                     inp = message.content.split("~EID")[1].strip()
                     cap = re.match("(\d\d\d\d)", inp)
