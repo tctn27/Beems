@@ -1,3 +1,5 @@
+import subprocess
+
 import websockets
 
 try:
@@ -172,7 +174,7 @@ try:
                     os.system("update")
 
                 elif message.content.startswith("~MCIP"):
-                    ip = os.system("curl https://ipinfo.io/ip")
+                    ip = subprocess.check_output(['curl https://ipinfo.io/ip'])
                     await message.channel.send(ip)
 
                 elif message.content.startswith("~EID"):
