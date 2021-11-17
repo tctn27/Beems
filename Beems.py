@@ -1,5 +1,3 @@
-import subprocess
-
 import websockets
 
 try:
@@ -11,6 +9,7 @@ try:
     from os import listdir
     import os
     import re
+    import math
     from random import randint
 
     with open("beems_token", "r+") as file:
@@ -29,7 +28,31 @@ try:
             blacklist.append(int(i))
 
 
-    def EID(n1, n2, n3, n4):
+    def combine2(first_word, second_word):
+        shared = []
+
+        for count, letter in enumerate(first_word):
+            for count2, letter2 in enumerate(second_word):
+                if letter == letter2:
+                    shared.append((letter, count + 1, count2))
+
+        if not shared:
+            return combine(first_word, second_word)
+
+        distanced = []
+        mid1, mid2 = len(first_word) / 2, len(second_word) / 2
+        for letter in shared:
+            distanced.append((letter, math.pow(letter[1] - mid1, 2) + math.pow(letter[2] - mid2, 2)))
+
+        distanced.sort(key=lambda x: (x[1], math.pow(x[0][1] - x[0][2], 2)))
+        chosen = distanced[0][0]
+
+        word = first_word[0:chosen[1]:] + second_word[chosen[2] + 1:]
+
+        return word
+
+
+    def eid(n1, n2, n3, n4):
         numbers = [n1, n2, n3, n4]
         keywords = ["flying", "deathtouch", "reach", "indestructible", "defender", "lifelink", "trample", "menace",
                     "first strike", "double strike", "haste", "hexproof"]
@@ -76,9 +99,9 @@ try:
                     break
 
         letter_index = -1
-        for l in second_word:
+        for letter in second_word:
             letter_index += 1
-            if l in vowels:
+            if letter in vowels:
                 out_word += second_word[letter_index:]
                 return out_word
 
@@ -126,7 +149,14 @@ try:
 
     async def full_combine(message, words):
         set_of_two = words[randint(0, len(words) - 1)]
-        combined = combine(set_of_two[0], set_of_two[1])
+
+        choice = randint(0, 1)
+        combined = None
+        if choice == 0:
+            combined = combine(set_of_two[0], set_of_two[1])
+        elif choice == 1:
+            combined = combine2(set_of_two[0], set_of_two[1])
+
         await message.channel.send("*" + combined + "*")
 
 
@@ -151,7 +181,7 @@ try:
 
         try:
             reaction, user = await client.wait_for("reaction_add", timeout=60.0, check=check)
-        except:
+        except ValueError:
             await message.channel.send("Channel not blacklisted")
         else:
             with open("blacklist", "w+") as file:
@@ -190,7 +220,7 @@ try:
                         nums = [randint(1, 6), randint(1, 6), randint(1, 6), randint(1, 6)]
                         out = "For " + str(nums[0]) + str(nums[1]) + str(nums[2]) + str(nums[3]) + ":\n\n"
 
-                    for i in EID(nums[0], nums[1], nums[2], nums[3]):
+                    for i in eid(nums[0], nums[1], nums[2], nums[3]):
                         out += i[0].capitalize() + " is " + i[1] + "\n"
 
                     await message.channel.send(out)
@@ -297,7 +327,8 @@ try:
 
                                             overall_string += string
                                         else:
-                                            await message.channel.send("Too many dice, what the hell are you doing mate")
+                                            await message.channel.send(
+                                                "Too many dice, what the hell are you doing mate")
                                     else:
                                         await message.channel.send("Dice don't have 0 sides, silly billy")
                                 else:
