@@ -438,7 +438,7 @@ try:
                     elif len(message.content.split(" ")) == 2 and len(words) > 0 \
                             and message.channel.id in whitelist:
                         await full_combine(message, words)
-                    elif len(words) > 0 and randint(0, 50) == 0:
+                    elif len(words) > 0 and randint(0, 20) == 0:
                         await full_combine(message, words)
             except Exception as e:
                 print(e)
