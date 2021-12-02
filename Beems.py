@@ -34,7 +34,8 @@ try:
         for count, letter in enumerate(first_word):
             for count2, letter2 in enumerate(second_word):
                 if letter == letter2:
-                    shared.append((letter, count + 1, count2))
+                    if count != 0 and count2 != len(second_word) - 1:
+                        shared.append((letter, count + 1, count2))
 
         if not shared:
             return combine(first_word, second_word)
@@ -84,7 +85,7 @@ try:
 
 
     def combine(first_word, second_word):
-        vowels = ["a", "e", "i", "o", "u"]
+        vowels = ["a", "e", "i", "o", "u", "y"]
         out_word = ""
 
         first = True
