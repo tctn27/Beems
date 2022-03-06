@@ -6,11 +6,13 @@ try:
     from discord.ext import commands
     from discord import Game
     from discord import Message
+    from discord import File
     from os import listdir
     import os
     import re
     import math
     from random import randint
+    from PIL import Image, ImageDraw, ImageFont
 
     with open("beems_token", "r+") as file:
         TOKEN = file.read().rstrip()
@@ -26,6 +28,22 @@ try:
     with open("blacklist", "r+") as f:
         for i in f:
             blacklist.append(int(i))
+
+
+    def choose_without_replacement(in_list, num=8):
+        """
+
+        :type in_list: list
+        :type num: int
+        """
+        temp = in_list
+
+        out = []
+        for i in range(num):
+            member = in_list[randint(0, len(in_list) - 1)]
+            out.append(member)
+            temp.remove(member)
+        return out
 
 
     def combine2(first_word, second_word):
@@ -204,6 +222,38 @@ try:
                 if message.content.startswith("~update") and message.channel.id in whitelist:  # direct calls
                     await message.channel.send("Update inbound, shutting down momentarily")
                     os.system("update")
+
+                elif message.content.startswith("~bingo"):
+                    tiles = []
+                    with open("bingo_tiles", "r+") as file:
+                        for line in file:
+                            tiles.append(line.rstrip())
+
+                    img = Image.new('RGB', (900, 900))
+
+                    d = ImageDraw.Draw(img)
+
+                    d.line([(300, 0), (300, 900)], width=2)
+                    d.line([(600, 0), (600, 900)], width=2)
+                    d.line([(0, 300), (900, 300)], width=2)
+                    d.line([(0, 600), (900, 600)], width=2)
+
+                    chosen_list = choose_without_replacement(tiles)
+                    chosen_list.insert(4, "Free\nSpace")
+
+                    fnt = ImageFont.truetype("arial.ttf", 24)
+                    for y in range(3):
+                        for x in range(3):
+                            w, h = d.textsize(chosen_list[3 * y + x])
+                            d.text((x * 300 + 150 - w, y * 300 + 150 - h), chosen_list[3 * y + x], font=fnt,
+                                   color=(125, 125, 125))
+
+                    ImageDraw.Draw(img)
+
+                    img.save("bingo.png", "PNG")
+
+                    await message.channel.send(file=File('bingo.png'))
+
 
                 elif message.content.startswith("~MCIP"):
                     ip = requests.get('https://api.ipify.org').text
