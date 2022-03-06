@@ -248,7 +248,7 @@ try:
                     chosen_list = choose_without_replacement(tiles)
                     chosen_list.insert(4, "Free\nSpace")
 
-                    fnt = ImageFont.truetype("arial.ttf", 24)
+                    fnt = ImageFont.truetype("Courier 10 Pitch.ttf", 24)
                     for y in range(3):
                         for x in range(3):
                             w, h = d.textsize(chosen_list[3 * y + x])
