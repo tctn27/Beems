@@ -223,6 +223,13 @@ try:
                     await message.channel.send("Update inbound, shutting down momentarily")
                     os.system("update")
 
+                elif message.content.startswith("~addBingo"):
+                    inp = message.content.split("~addBingo")[1].strip()
+                    with open("bingo_tiles", "a") as file:
+                        file.writelines(inp + "\n")
+                        file.close()
+                    await message.channel.send("Successfully added")
+
                 elif message.content.startswith("~bingo"):
                     tiles = []
                     with open("bingo_tiles", "r+") as file:
