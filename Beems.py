@@ -251,8 +251,12 @@ try:
                     for y in range(size):
                         d.line([(0, 300 * (y+1)), (300 * (size+1), 300 * (y+1))], width=2)
 
-                    chosen_list = choose_without_replacement(tiles, num=(size*size)-1)
-                    chosen_list.insert(4, "Free\nSpace")
+                    chosen_list = []
+                    if size%2:
+                        chosen_list = choose_without_replacement(tiles, num=(size*size)-1)
+                        chosen_list.insert(4, "Free\nSpace")
+                    else:
+                        chosen_list = choose_without_replacement(tiles, num=size*size)
 
                     fnt = ImageFont.truetype("arial.ttf", 24)
                     for y in range(size):
