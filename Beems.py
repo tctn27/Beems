@@ -248,19 +248,29 @@ try:
                     chosen_list = choose_without_replacement(tiles)
                     chosen_list.insert(4, "Free\nSpace")
 
-                    fnt = ImageFont.truetype("ubuntu", 24)
+                    fnt = ImageFont.truetype("Ariel.ttf", 24)
                     for y in range(3):
                         for x in range(3):
-                            w, h = d.textsize(chosen_list[3 * y + x])
-                            d.text((x * 300 + 150 - w, y * 300 + 150 - h), chosen_list[3 * y + x], font=fnt,
-                                   color=(125, 125, 125))
+                            phrase = chosen_list[3 * y + x]
+                            w, h = d.textsize(phrase)
+                            if w < 250:
+                                d.text((x * 300 + 150 - w, y * 300 + 150 - h), phrase, font=fnt,
+                                       color=(125, 125, 125))
+                            else:
+                                spaces = []
+                                for index, letter in enumerate(phrase):
+                                    if letter == " ":
+                                        spaces.append(index)
+                                centre_index = spaces[math.floor(len(spaces)/2)]
+                                new_phrase = phrase[:centre_index] + "\n" + phrase[centre_index + 1:]
+                                d.text((x * 300 + 150 - w, y * 300 + 150 - h), new_phrase, font=fnt,
+                                       color=(125, 125, 125))
 
                     ImageDraw.Draw(img)
 
                     img.save("bingo.png", "PNG")
 
                     await message.channel.send(file=File('bingo.png'))
-
 
                 elif message.content.startswith("~MCIP"):
                     ip = requests.get('https://api.ipify.org').text
