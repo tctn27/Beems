@@ -231,40 +231,55 @@ try:
                     await message.channel.send("Successfully added")
 
                 elif message.content.startswith("~bingo"):
+                    inp = message.content.split("~bingo")[1].strip()
+                    try:
+                        size = int(re.match("(\d)", inp).groups()[0])
+                    except:
+                        size = 3
+
                     tiles = []
                     with open("bingo_tiles", "r+") as file:
                         for line in file:
                             tiles.append(line.rstrip())
 
-                    img = Image.new('RGB', (900, 900))
+                    img = Image.new('RGB', (300 * size, 300 * size))
 
                     d = ImageDraw.Draw(img)
 
-                    d.line([(300, 0), (300, 900)], width=2)
-                    d.line([(600, 0), (600, 900)], width=2)
-                    d.line([(0, 300), (900, 300)], width=2)
-                    d.line([(0, 600), (900, 600)], width=2)
+                    for x in range(size):
+                        d.line([(300 * (x+1), 0), (300 * (x+1), 300 * (size+1))], width=2)
+                    for y in range(size):
+                        d.line([(0, 300 * (y+1)), (300 * (size+1), 300 * (y+1))], width=2)
 
-                    chosen_list = choose_without_replacement(tiles)
+                    chosen_list = choose_without_replacement(tiles, num=(size*size)-1)
                     chosen_list.insert(4, "Free\nSpace")
 
-                    fnt = ImageFont.truetype("Ariel.ttf", 24)
-                    for y in range(3):
-                        for x in range(3):
-                            phrase = chosen_list[3 * y + x]
-                            w, h = d.textsize(phrase)
-                            if w < 250:
-                                d.text((x * 300 + 150 - w, y * 300 + 150 - h), phrase, font=fnt,
-                                       color=(125, 125, 125))
-                            else:
+                    fnt = ImageFont.truetype("arial.ttf", 24)
+                    for y in range(size):
+                        for x in range(size):
+                            phrase = chosen_list[size * y + x]
+                            out_phrase = phrase
+                            w, h = d.textsize(out_phrase, fnt)
+                            splits = 1
+
+                            while w > 250:
+                                out_phrase = ""
                                 spaces = []
                                 for index, letter in enumerate(phrase):
                                     if letter == " ":
                                         spaces.append(index)
-                                centre_index = spaces[math.floor(len(spaces)/2)]
-                                new_phrase = phrase[:centre_index] + "\n" + phrase[centre_index + 1:]
-                                d.text((x * 300 + 150 - w, y * 300 + 150 - h), new_phrase, font=fnt,
-                                       color=(125, 125, 125))
+                                last_point = 0
+                                for line in range(splits):
+                                    if line > 0:
+                                        cut_point = spaces[math.floor(len(spaces)*line/(splits+1))]
+                                        out_phrase += phrase[:cut_point] + "\n"
+                                        last_point = cut_point
+                                out_phrase += phrase[last_point + 1:]
+                                w, h = d.textsize(out_phrase, fnt)
+                                splits += 1
+
+                            d.text((x * 300 + 150 - w / 2, y * 300 + 150 - h / 2), out_phrase, font=fnt,
+                                   color=(125, 125, 125))
 
                     ImageDraw.Draw(img)
 
@@ -514,5 +529,5 @@ try:
 
 
     client.run(TOKEN)
-except websockets.exceptions.ConnectionClosed as e:
+except websockets.ConnectionClosed as e:
     os.system("runbot")
